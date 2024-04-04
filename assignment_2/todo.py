@@ -18,10 +18,12 @@ from pprint import pprint
 from typing import cast
 from lang import *
 
+
 class Branch:
     assembly_instruction: str
     second_argument: str
     type: str
+
 
 def line2env(line):
     """
@@ -35,11 +37,13 @@ def line2env(line):
         1
     """
     import json
+
     env_dict = json.loads(line)
     env_lang = Env()
     for k, v in env_dict.items():
         env_lang.set(k.strip(), v)
     return env_lang
+
 
 def file2cfg_and_env(lines):
     """
@@ -70,10 +74,8 @@ def file2cfg_and_env(lines):
         >>> interp(prog[0], env).get("x")
         9
     """
-    
-    env = line2env(lines[0])
 
-    final_instructions = []
+    env = line2env(lines[0])
 
     parsed_instructions = {}
 
@@ -83,30 +85,56 @@ def file2cfg_and_env(lines):
 
         current_instruction = None
 
-        if (instruction_pieces[0] == "bt"):
+        if instruction_pieces[0] == "bt":
             current_instruction = assembly_instruction
-        elif (instruction_pieces[2] == "add"):
-            current_instruction = Add(instruction_pieces[0].strip(), instruction_pieces[3].strip(), instruction_pieces[4].strip())
-        elif (instruction_pieces[2] == "geq"):
-            current_instruction = Geq(instruction_pieces[0].strip(), instruction_pieces[3].strip(), instruction_pieces[4].strip())
-        elif (instruction_pieces[2] == "lth"):
-            current_instruction = Lth(instruction_pieces[0].strip(), instruction_pieces[3].strip(), instruction_pieces[4].strip())
-        elif (instruction_pieces[2] == "mul"):
-            current_instruction = Mul(instruction_pieces[0].strip(), instruction_pieces[3].strip(), instruction_pieces[4].strip())
+        elif instruction_pieces[2] == "add":
+            current_instruction = Add(
+                instruction_pieces[0].strip(),
+                instruction_pieces[3].strip(),
+                instruction_pieces[4].strip(),
+            )
+        elif instruction_pieces[2] == "geq":
+            current_instruction = Geq(
+                instruction_pieces[0].strip(),
+                instruction_pieces[3].strip(),
+                instruction_pieces[4].strip(),
+            )
+        elif instruction_pieces[2] == "lth":
+            current_instruction = Lth(
+                instruction_pieces[0].strip(),
+                instruction_pieces[3].strip(),
+                instruction_pieces[4].strip(),
+            )
+        elif instruction_pieces[2] == "mul":
+            current_instruction = Mul(
+                instruction_pieces[0].strip(),
+                instruction_pieces[3].strip(),
+                instruction_pieces[4].strip(),
+            )
 
         parsed_instructions.setdefault(index - 1, current_instruction)
-    
-    for key, value in parsed_instructions.items():
-        if isinstance(value, str):
-            instruction_pieces = value.split(" ")
 
-            branch_instruction = Bt(instruction_pieces[1], parsed_instructions.get(instruction_pieces[2]), None)
+    while next((v for v in parsed_instructions.values() if isinstance(v, str)), None):
+        for key, value in parsed_instructions.items():
+            if isinstance(value, str):
+                instruction_pieces = value.split(" ")
 
-            parsed_instructions[key] = branch_instruction
-        if key > 0:
-            parsed_instructions[key-1].add_next(parsed_instructions[key])
+                if isinstance(parsed_instructions.get(int(instruction_pieces[2])), str):
+                    continue
+
+                branch_instruction = Bt(
+                    instruction_pieces[1],
+                    parsed_instructions.get(int(instruction_pieces[2])),
+                    None,
+                )
+
+                parsed_instructions[key] = branch_instruction
+            if key > 0:
+                if isinstance(parsed_instructions[key - 1], str):
+                    continue
+
+                parsed_instructions[key - 1].add_next(parsed_instructions[key])
 
     final_instructions = list(parsed_instructions.values())
 
-    return (env, final_instructions)
-
+    return env, final_instructions
