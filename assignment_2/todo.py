@@ -38,7 +38,7 @@ def line2env(line):
     env_dict = json.loads(line)
     env_lang = Env()
     for k, v in env_dict.items():
-        env_lang.set(k, v)
+        env_lang.set(k.strip(), v)
     return env_lang
 
 def file2cfg_and_env(lines):
@@ -86,13 +86,13 @@ def file2cfg_and_env(lines):
         if (instruction_pieces[0] == "bt"):
             current_instruction = assembly_instruction
         elif (instruction_pieces[2] == "add"):
-            current_instruction = Add(instruction_pieces[0], instruction_pieces[3], instruction_pieces[4])
+            current_instruction = Add(instruction_pieces[0].strip(), instruction_pieces[3].strip(), instruction_pieces[4].strip())
         elif (instruction_pieces[2] == "geq"):
-            current_instruction = Geq(instruction_pieces[0], instruction_pieces[3], instruction_pieces[4])
+            current_instruction = Geq(instruction_pieces[0].strip(), instruction_pieces[3].strip(), instruction_pieces[4].strip())
         elif (instruction_pieces[2] == "lth"):
-            current_instruction = Lth(instruction_pieces[0], instruction_pieces[3], instruction_pieces[4])
+            current_instruction = Lth(instruction_pieces[0].strip(), instruction_pieces[3].strip(), instruction_pieces[4].strip())
         elif (instruction_pieces[2] == "mul"):
-            current_instruction = Mul(instruction_pieces[0], instruction_pieces[3], instruction_pieces[4])
+            current_instruction = Mul(instruction_pieces[0].strip(), instruction_pieces[3].strip(), instruction_pieces[4].strip())
 
         parsed_instructions.setdefault(index - 1, current_instruction)
     
