@@ -91,6 +91,8 @@ def file2cfg_and_env(lines):
             current_instruction = Geq(instruction_pieces[0], instruction_pieces[3], instruction_pieces[4])
         elif (instruction_pieces[2] == "lth"):
             current_instruction = Lth(instruction_pieces[0], instruction_pieces[3], instruction_pieces[4])
+        elif (instruction_pieces[2] == "mul"):
+            current_instruction = Mul(instruction_pieces[0], instruction_pieces[3], instruction_pieces[4])
 
         parsed_instructions.setdefault(index - 1, current_instruction)
     
