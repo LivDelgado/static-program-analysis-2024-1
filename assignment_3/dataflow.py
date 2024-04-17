@@ -243,7 +243,7 @@ class LivenessAnalysisIN_Eq(IN_Eq):
         out_except_v = {v for v in out_set if v != self.inst.dst} if isinstance(self.inst, BinOp) else out_set
 
         vars_used_in_e = [self.inst.src0, self.inst.src1] if isinstance(self.inst, BinOp) else (
-            [self.inst.cond, self.inst.true_dst, self.inst.false_dst] if isinstance(self.inst, Bt) else []
+            [self.inst.cond] if isinstance(self.inst, Bt) else []
         )
 
         return out_except_v.union(vars_used_in_e)
