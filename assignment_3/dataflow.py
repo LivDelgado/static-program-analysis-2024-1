@@ -238,8 +238,15 @@ class LivenessAnalysisIN_Eq(IN_Eq):
             >>> sorted(df.eval_aux({'OUT_0': {'x'}}))
             ['a', 'b']
         """
-        # TODO: implement this method
-        return None
+        # Implemented as part of the assignment
+        out_set = data_flow_env[name_out(self.inst.ID)]
+        out_except_v = {v for v in out_set if v != self.inst.dst} if isinstance(self.inst, BinOp) else out_set
+
+        vars_used_in_e = [self.inst.src0, self.inst.src1] if isinstance(self.inst, BinOp) else (
+            [self.inst.cond, self.inst.true_dst, self.inst.false_dst] if isinstance(self.inst, Bt) else []
+        )
+
+        return out_except_v.union(vars_used_in_e)
 
     def __str__(self):
         """
@@ -273,8 +280,11 @@ class LivenessAnalysisOUT_Eq(OUT_Eq):
             >>> sorted(df.eval_aux({'IN_0': {('c'), ('d')}, 'IN_1': {('a')}}))
             ['a', 'c', 'd']
         """
-        # TODO: implement this method
-        return None
+        # Implemented as part of this assignment
+        solution = set()
+        for inst in self.inst.nexts:
+            solution = solution.union(data_flow_env[name_in(inst.ID)])
+        return solution
 
     def __str__(self):
         """
@@ -331,8 +341,10 @@ def liveness_constraint_gen(insts):
         >>> sol[0] + " " + sol[1]
         "IN_0: (OUT_0 - {'c'}) + ['a', 'b'] IN_1: (OUT_1 - {'d'}) + ['a', 'c']"
     """
-    # TODO: implement this method.
-    return None
+    # Implemented as part of this assignment
+    in0 = [LivenessAnalysisIN_Eq(i) for i in insts]
+    out = [LivenessAnalysisOUT_Eq(i) for i in insts]
+    return in0 + out
 
 
 def abstract_interp(equations):
