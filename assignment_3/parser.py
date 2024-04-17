@@ -129,11 +129,9 @@ def file2cfg_and_env(lines):
                 )
 
                 parsed_instructions[key] = branch_instruction
-            if key > 0:
-                if isinstance(parsed_instructions[key - 1], str):
-                    continue
-
-                parsed_instructions[key - 1].add_next(parsed_instructions[key])
+    for key, value in parsed_instructions.items():
+        if key > 0:
+            parsed_instructions[key - 1].add_next(parsed_instructions[key])
 
     final_instructions = list(parsed_instructions.values())
 

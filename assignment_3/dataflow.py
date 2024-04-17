@@ -284,6 +284,7 @@ class LivenessAnalysisOUT_Eq(OUT_Eq):
         solution = set()
         for inst in self.inst.nexts:
             solution = solution.union(data_flow_env[name_in(inst.ID)])
+
         return solution
 
     def __str__(self):
@@ -342,8 +343,8 @@ def liveness_constraint_gen(insts):
         "IN_0: (OUT_0 - {'c'}) + ['a', 'b'] IN_1: (OUT_1 - {'d'}) + ['a', 'c']"
     """
     # Implemented as part of this assignment
-    in0 = [LivenessAnalysisIN_Eq(i) for i in insts]
     out = [LivenessAnalysisOUT_Eq(i) for i in insts]
+    in0 = [LivenessAnalysisIN_Eq(i) for i in insts]
     return in0 + out
 
 
