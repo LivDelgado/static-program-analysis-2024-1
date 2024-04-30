@@ -136,8 +136,28 @@ def evaluate_st_constraints(insts, env):
         >>> sorted([str(edge) for edge in edges])
         ['Alias(r) >= Alias(a)', 'Alias(s) >= Alias(x)']
     """
-    # TODO: Implement this method.
-    return None
+    new_edges = []
+
+    for instruction in insts:
+        # if instruction is not a store constraint, move to the next inst
+        if not isinstance(instruction, Store):
+            continue
+
+        current_ref_alias_set = env.get(instruction.ref, set())
+
+        # empty set, move on
+        if not current_ref_alias_set:
+            continue
+
+        for points_to_element in current_ref_alias_set:
+            # information is already flowing in this node, there is no need to create an edge from x -> x
+            if points_to_element == instruction.src:
+                continue
+
+            new_edge = Edge(points_to_element, instruction.src)
+            new_edges.append(new_edge)
+
+    return new_edges
 
 
 def evaluate_ld_constraints(insts, env):
