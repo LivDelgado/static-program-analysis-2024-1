@@ -30,8 +30,13 @@ class Edge:
             >>> f"{result}: {sorted(env['a'])}"
             "True: ['ref_0', 'ref_1']"
         """
-        # TODO: Implement this method.
-        return False
+        destination_alias_set = env.get(self.dst)
+        source_alias_set = env.get(self.src)
+
+        new_destination_alias_set = source_alias_set.union(destination_alias_set)
+        env[self.dst] = set(sorted(new_destination_alias_set))
+
+        return bool(set(new_destination_alias_set).difference(destination_alias_set))
 
     def __str__(self):
         """
