@@ -177,8 +177,28 @@ def evaluate_ld_constraints(insts, env):
         >>> sorted([str(edge) for edge in edges])
         ['Alias(b) >= Alias(r)', 'Alias(y) >= Alias(s)']
     """
-    # TODO: Implement this method.
-    return None
+    new_edges = []
+
+    for instruction in insts:
+        # if instruction is not a load constraint, move to the next inst
+        if not isinstance(instruction, Load):
+            continue
+
+        current_ref_alias_set = env.get(instruction.ref, set())
+
+        # empty set, move on
+        if not current_ref_alias_set:
+            continue
+
+        for points_to_element in current_ref_alias_set:
+            # information is already flowing in this node, there is no need to create an edge from x -> x
+            if points_to_element == instruction.dst:
+                continue
+
+            new_edge = Edge(instruction.dst, points_to_element)
+            new_edges.append(new_edge)
+
+    return new_edges
 
 
 def abstract_interp(insts):
