@@ -30,8 +30,8 @@ class Edge:
             >>> f"{result}: {sorted(env['a'])}"
             "True: ['ref_0', 'ref_1']"
         """
-        destination_alias_set = env.get(self.dst)
-        source_alias_set = env.get(self.src)
+        destination_alias_set = env.get(self.dst, set())
+        source_alias_set = env.get(self.src, set())
 
         new_destination_alias_set = source_alias_set.union(destination_alias_set)
         env[self.dst] = set(sorted(new_destination_alias_set))
@@ -108,8 +108,15 @@ def propagate_alias_info(edges, env):
         >>> f"{changed, env['a'], env['b']}"
         "(False, {'v0'}, {'v0'})"
     """
-    # TODO: Implement this method.
-    return None
+    some_points_to_set_changed = False
+
+    for edge in edges:
+        points_to_set_changed = edge.eval(env)
+
+        if points_to_set_changed:
+            some_points_to_set_changed = True
+
+    return some_points_to_set_changed
 
 
 def evaluate_st_constraints(insts, env):
