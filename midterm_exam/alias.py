@@ -75,7 +75,8 @@ def init_env(insts):
 
         new_memory_location = f"ref_{counter}"
 
-        if current_set := env.get(instruction.name):
+        if env.get(instruction.name):
+            current_set = env.get(instruction.name)
             # the allocation name already exists
             current_set.add(new_memory_location)
         else:
