@@ -20,7 +20,7 @@ class Edge:
     def eval(self, env):
         """
         Evaluating an edge such as dst -> src means copying every pointer in
-        Alias(dst) into Alias(src). This function retuyrns True if the
+        Alias(dst) into Alias(src). This function returns True if the
         points-to set of dst changes after the evaluation.
 
         Example:
@@ -58,8 +58,29 @@ def init_env(insts):
         >>> sorted(init_env([i0, i1, i2])['v'])
         ['ref_0', 'ref_1']
     """
-    # TODO: Implement this method.
-    return None
+    env = {}
+    counter = -1
+
+    for instruction in insts:
+        counter += 1
+
+        # if instruction is not an initialization constraint, move to the next inst
+        if not isinstance(instruction, Alloca):
+            continue
+
+        new_memory_location = f"ref_{counter}"
+
+        if current_set := env.get(instruction.name):
+            # the allocation name already exists
+            current_set.append(new_memory_location)
+        else:
+            # create new entry in the environment
+            env.setdefault(instruction.name, [new_memory_location])
+
+        # add entry for the new memory location
+        env.setdefault(new_memory_location, [])
+
+    return env
 
 
 def propagate_alias_info(edges, env):
