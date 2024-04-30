@@ -77,13 +77,13 @@ def init_env(insts):
 
         if current_set := env.get(instruction.name):
             # the allocation name already exists
-            current_set.append(new_memory_location)
+            current_set.add(new_memory_location)
         else:
             # create new entry in the environment
-            env.setdefault(instruction.name, [new_memory_location])
+            env.setdefault(instruction.name, {new_memory_location})
 
         # add entry for the new memory location
-        env.setdefault(new_memory_location, [])
+        env.setdefault(new_memory_location, set())
 
     return env
 
@@ -117,6 +117,20 @@ def propagate_alias_info(edges, env):
             some_points_to_set_changed = True
 
     return some_points_to_set_changed
+
+
+def evaluate_mv_constraints(insts):
+    new_edges = []
+
+    for instruction in insts:
+        # if instruction is not a move constraint, move to the next inst
+        if not isinstance(instruction, Move):
+            continue
+
+        if instruction.src != instruction.dst:
+            new_edges.append(Edge(instruction.dst, instruction.src))
+
+    return new_edges
 
 
 def evaluate_st_constraints(insts, env):
@@ -224,23 +238,26 @@ def abstract_interp(insts):
         >>> env['p0'], env['p1'], env['p2'], env['p3'], env['ref_0']
         ({'ref_0'}, {'ref_1'}, {'ref_1'}, {'ref_1'}, {'ref_1'})
     """
-    # TODO: Implement this method.
     #
     # 1. Initialize the environment:
     #
+    env = init_env(insts)
 
     # 2. Build the initial graph of points-to relations:
     #
+    edges = evaluate_mv_constraints(insts)
 
     # 3. Run iterations until we stabilize:
     #
-    changed = False
+    changed = True
     while changed:
         # 3.a: Evaluate all the complex constraints:
         #
+        edges += evaluate_st_constraints(insts, env)
+        edges += evaluate_ld_constraints(insts, env)
 
         # 3.b: Propagate the points-to information:
         #
-        pass
+        changed = propagate_alias_info(edges, env)
 
-    return None
+    return env
