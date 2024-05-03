@@ -1,6 +1,4 @@
 """
-Introduction to Data-Flow Analysis.
-
 This file contains the implementation of a simple interpreter of low-level
 instructions. The interpreter takes a program, represented as its first
 instruction, plus an environment, which is a stack of bindings. Bindings are
@@ -51,7 +49,7 @@ class Env:
         if val is not None:
             return val
         else:
-            raise LookupError(f"Absent key {var}")
+            raise LookupError(f"Absent key {val}")
 
     def set(s, var, value):
         """

@@ -357,8 +357,17 @@ def build_dependence_graph(equations) -> dict[str, list[DataFlowEq]]:
         >>> [eq.name() for eq in deps['IN_0']]
         ['OUT_0']
     """
-    # TODO: implement this method
-    dep_graph = {eq.name(): [] for eq in equations}
+    # implemented in this exercise
+    dep_graph = {}
+    for e in equations:
+        for dep in e.deps():
+            current_us = []
+            if dep_graph.get(e.name()):  # equation already added to dependency graph
+                current_us = dep_graph.get(e.name())
+
+            current_us.append(dep)
+            dep_graph[e.name()] = list(set(current_us))
+
     return dep_graph
 
 
