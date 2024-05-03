@@ -264,14 +264,7 @@ class ReachingDefs_IN_Eq(IN_Eq):
             ['OUT_0', 'OUT_1']
         """
         # implemented in this exercise
-        instruction_used_vars = (
-            {self.inst.src0, self.inst.src1} if isinstance(self.inst, BinOp) else {}
-        )
-        deps_result = {
-            name_out(ps.ID)
-            for ps in self.inst.preds
-            if isinstance(ps, BinOp) and ps.dst in instruction_used_vars
-        }
+        deps_result = {name_out(ps.ID) for ps in self.inst.preds}
 
         return list(deps_result)
 
@@ -360,14 +353,15 @@ def build_dependence_graph(equations):
     # implemented in this exercise
     dep_graph = {}
     for e in equations:
-        current_us = []
+        current_list_of_equations_that_use_e = []
         if dep_graph.get(e.name()):  # equation already added to dependency graph
-            current_us = dep_graph.get(e.name())
+            current_list_of_equations_that_use_e = dep_graph.get(e.name())
 
         for dep in e.deps():
-            current_us.append(dep)
+            # dep uses v in e
+            current_list_of_equations_that_use_e.append(dep)
 
-        dep_graph[e.name()] = list(set(current_us))
+        dep_graph[e.name()] = list(set(current_list_of_equations_that_use_e))
     return dep_graph
 
 
