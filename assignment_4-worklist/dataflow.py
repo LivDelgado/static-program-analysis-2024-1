@@ -263,8 +263,17 @@ class ReachingDefs_IN_Eq(IN_Eq):
             >>> sorted(df.deps())
             ['OUT_0', 'OUT_1']
         """
-        # TODO: Implement this method
-        return []
+        # implemented in this exercise
+        instruction_used_vars = (
+            {self.inst.src0, self.inst.src1} if isinstance(self.inst, BinOp) else {}
+        )
+        deps_result = {
+            name_out(ps.ID)
+            for ps in self.inst.preds
+            if isinstance(ps, BinOp) and ps.dst in instruction_used_vars
+        }
+
+        return list(deps_result)
 
     def __str__(self):
         """
