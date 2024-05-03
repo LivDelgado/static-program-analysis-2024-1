@@ -360,14 +360,14 @@ def build_dependence_graph(equations):
     # implemented in this exercise
     dep_graph = {}
     for e in equations:
+        current_us = []
+        if dep_graph.get(e.name()):  # equation already added to dependency graph
+            current_us = dep_graph.get(e.name())
+
         for dep in e.deps():
-            current_us = []
-            if dep_graph.get(e.name()):  # equation already added to dependency graph
-                current_us = dep_graph.get(e.name())
-
             current_us.append(dep)
-            dep_graph[e.name()] = list(set(current_us))
 
+        dep_graph[e.name()] = list(set(current_us))
     return dep_graph
 
 
@@ -399,6 +399,6 @@ def abstract_interp_worklist(equations):
     while worklist:
         eq = worklist.pop()
         if eq.eval(env):
-            worklist.append(dep_graph.deps(eq))
+            worklist.append(dep_graph[eq.name()])
 
     return (env, DataFlowEq.num_evals)
