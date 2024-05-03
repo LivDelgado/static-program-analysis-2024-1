@@ -350,18 +350,28 @@ def build_dependence_graph(equations):
         >>> [eq.name() for eq in deps['IN_0']]
         ['OUT_0']
     """
+    """
+    Supposing that OUT_X uses IN_X
+    OUT_X.deps() = "IN_X"
+    
+    after running this function
+    {
+        'IN_X' = 'OUT_X'
+    }
+    
+    for dep in e.deps():
+        dep_graph[dep] += e 
+
+    """
     # implemented in this exercise
-    dep_graph = {}
+    dep_graph = {e.name(): [] for e in equations}
+
     for e in equations:
-        current_list_of_equations_that_use_e = []
-        if dep_graph.get(e.name()):  # equation already added to dependency graph
-            current_list_of_equations_that_use_e = dep_graph.get(e.name())
-
         for dep in e.deps():
-            # dep uses v in e
-            current_list_of_equations_that_use_e.append(dep)
+            current_list_of_equations_that_use_dep = dep_graph.get(dep, [])
+            current_list_of_equations_that_use_dep.append(e)
+            dep_graph[dep] = list(set(current_list_of_equations_that_use_dep))
 
-        dep_graph[e.name()] = list(set(current_list_of_equations_that_use_e))
     return dep_graph
 
 
