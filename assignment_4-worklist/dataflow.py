@@ -387,9 +387,17 @@ def abstract_interp_worklist(equations) -> tuple[Env, int]:
         >>> f"OUT_0: {sorted(sol['OUT_0'])}"
         "OUT_0: [('c', 0)]"
     """
-    # TODO: implement this method
     from collections import defaultdict
 
     DataFlowEq.num_evals = 0
     env = defaultdict(list)
+
+    dep_graph = build_dependence_graph(equations=equations)
+
+    worklist = equations
+    while worklist:
+        eq = worklist.pop()
+        if eq.eval(env):
+            worklist.append(dep_graph.deps(eq))
+
     return (env, DataFlowEq.num_evals)
