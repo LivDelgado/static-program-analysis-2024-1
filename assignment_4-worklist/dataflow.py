@@ -399,12 +399,12 @@ def abstract_interp_worklist(equations):
 
     dep_graph = build_dependence_graph(equations=equations)
 
-    equations_dict = {eq.name(): eq for eq in equations}
+    # equations_dict = {eq.name(): eq for eq in equations}
 
     worklist = equations
     while worklist:
         eq = worklist.pop()
         if eq.eval(env):
-            worklist += [equations_dict.get(dep) for dep in dep_graph[eq.name()]]
+            worklist += dep_graph[eq.name()]
 
     return (env, DataFlowEq.num_evals)
