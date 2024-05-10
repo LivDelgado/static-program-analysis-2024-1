@@ -159,8 +159,7 @@ def dominance_constraint_gen(insts: list[Inst]) -> list[Dominance_Eq]:
         >>> sol[3]
         'D(3) = set(3) U Intersection( D(0), D(1), D(2) )'
     """
-    # TODO: Implement this function.
-    return []
+    return [Dominance_Eq(i) for i in insts]
 
 
 class UniversalSet(set):
