@@ -68,7 +68,7 @@ class Dominance_Eq(DataFlowEq):
     dominators of the predecessors of v.
     """
 
-    def eval_aux(self, env: dict[str, set[int]]) -> set[int]:
+    def eval_aux(self, env):
         """
         The evaluation of the meet operation for the dominance relation.
         Basically: D[n] = {n} U Intersection(D[p], for p in n.preds)
@@ -150,7 +150,7 @@ class Dominance_Eq(DataFlowEq):
         return f"D({self.name()}) = set({self.inst.ID}) U Intersection( {ps} )"
 
 
-def dominance_constraint_gen(insts: list[Inst]) -> list[Dominance_Eq]:
+def dominance_constraint_gen(insts):
     """
     Builds a list of equations to solve Dominance Analysis for the given set of
     instructions.
@@ -205,7 +205,7 @@ class UniversalSet(set):
         return other
 
 
-def abstract_interp(equations: list[Dominance_Eq]) -> dict[str, set[int]]:
+def abstract_interp(equations):
     """
     This function iterates on the equations, solving them in the order in which
     they appear. It returns an environment with the solution to the data-flow
