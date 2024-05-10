@@ -1,4 +1,4 @@
-from lang import Inst
+from lang import *
 from abc import ABC, abstractmethod
 
 
@@ -91,8 +91,20 @@ class Dominance_Eq(DataFlowEq):
             >>> sorted(df.eval_aux({'1': {0, 1}, '2': {0, 2}}))
             [0, 3]
         """
-        # TODO: Implement this method.
-        return set()
+        v = {self.inst.ID}
+
+        predecessors_set = set()
+
+        for pred_inst in self.inst.preds:
+            pred_inst_deps = env.get(str(pred_inst.ID))
+            if pred_inst_deps:
+                predecessors_set = (
+                    predecessors_set.intersection(pred_inst_deps)
+                    if predecessors_set
+                    else pred_inst_deps
+                )
+
+        return v.union(predecessors_set)
 
     def name(self):
         """
