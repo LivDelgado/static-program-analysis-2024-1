@@ -1,3 +1,5 @@
+from functools import reduce
+
 from lang import *
 from abc import ABC, abstractmethod
 
@@ -94,18 +96,25 @@ class Dominance_Eq(DataFlowEq):
         # implemented in this exercise
         v = {self.inst.ID}
 
-        predecessors_set = set()
+        list_of_predecessors_deps = [
+            env.get(str(pred_inst.ID))
+            for pred_inst in self.inst.preds
+            if env.get(str(pred_inst.ID))
+        ]
 
-        for pred_inst in self.inst.preds:
-            pred_inst_deps = env.get(str(pred_inst.ID))
-            if pred_inst_deps:
-                predecessors_set = (
-                    predecessors_set.intersection(pred_inst_deps)
-                    if predecessors_set
-                    else pred_inst_deps
+        predecessors_set = set()
+        if list_of_predecessors_deps:
+            if len(list_of_predecessors_deps) == 1:
+                predecessors_set = list_of_predecessors_deps[0]
+            else:
+                predecessors_set = list_of_predecessors_deps[0].intersection(
+                    *list_of_predecessors_deps[1:]
                 )
 
-        return v.union(predecessors_set)
+        result = v.union(predecessors_set)
+        env[str(self.inst.ID)] = result
+
+        return result
 
     def name(self):
         """
@@ -250,6 +259,12 @@ def abstract_interp(equations: list[Dominance_Eq]) -> dict[str, set[int]]:
         >>> f"D(0): {sorted(s['0'])}, D(1): {sorted(s['1'])}"
         'D(0): [0], D(1): [0, 1]'
     """
-    # TODO: Implement this function.
+    # implemented in this exercise
     env = {eq.name(): UniversalSet() for eq in equations}
+
+    changed = True
+
+    while changed:
+        changed = reduce(lambda acc, eq: eq.eval(env) or acc, equations, False)
+
     return env
