@@ -252,12 +252,14 @@ class PhiBlock(Inst):
         the ID of the instruction that leads to that parallel assignment.
 
         Examples:
+            >>> Inst.next_index = 0
             >>> a0 = Phi("a0", ["a0", "a1"])
             >>> a1 = Phi("a1", ["a1", "a0"])
             >>> aa = PhiBlock([a0, a1], [10, 31])
             >>> sorted(aa.selectors.items())
             [(10, 0), (31, 1)]
 
+            >>> Inst.next_index = 0
             >>> a0 = Phi("a0", ["a0", "a1"])
             >>> a1 = Phi("a1", ["a1", "a0"])
             >>> aa = PhiBlock([a0, a1], [10, 31])
@@ -265,9 +267,11 @@ class PhiBlock(Inst):
             ['a0', 'a1']
         """
         self.phis = phis
-        # TODO: implement the rest of this method
-        # here...
-        #########################################
+
+        # implemented in this exercise
+        self.selectors = dict(
+            (selector_IDs[i], phis[i].ID) for i in range(len(selector_IDs))
+        )
         super().__init__()
 
     def definition(self):
