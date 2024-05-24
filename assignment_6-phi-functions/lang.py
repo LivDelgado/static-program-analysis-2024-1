@@ -270,7 +270,7 @@ class PhiBlock(Inst):
 
         # implemented in this exercise
         self.selectors = dict(
-            (selector_IDs[i], phis[i].ID) for i in range(len(selector_IDs))
+            (selector_IDs[i], i) for i in range(len(selector_IDs))
         )
         super().__init__()
 
@@ -304,9 +304,24 @@ class PhiBlock(Inst):
         return sum([phi.uses() for phi in self.phis], [])
 
     def eval(self, env, PC):
-        # TODO: Read all the definitions
-        # TODO: Assign all the uses:
-        pass
+        """
+         Once a phi-block is evaluated, all the values in a given column of this matrix are read and
+         saved, and then the definitions are updated --- all in parallel.
+
+         If the program flow reaches the join point coming from the second edge,
+         then we must copy the second column of uses into the column of definitions
+         This assignment must happen in parallel
+        """
+        # implemented in this exercise
+        index = self.selectors.get(PC)
+
+        operations = {}
+        for phi in self.phis:
+            use = phi.uses()[index]
+            operations.setdefault(phi.dst, env.get(use))
+
+        for k, v in operations.items():
+            env.set(k, v)
 
     def __str__(self):
         block_str = "\n".join([str(phi) for phi in self.phis])
@@ -503,15 +518,16 @@ def interp(instruction, environment, PC=0):
         2
     """
     if instruction:
-        print("----------------------------------------------------------")
-        print(instruction)
+        # print("----------------------------------------------------------")
+        # print(instruction)
         environment.dump()
+
+        # implemented in this exercise
         if isinstance(instruction, PhiBlock):
-            # TODO: implement this part:
-            pass
+            instruction.eval(environment, PC)
         else:
-            # TODO: implement this part:
-            pass
+            instruction.eval(environment)
+
         return interp(instruction.get_next(), environment, instruction.ID)
     else:
         return environment
