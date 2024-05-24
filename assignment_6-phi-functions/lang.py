@@ -12,7 +12,7 @@ The latter represents the set of phi-functions that exist at the beginning of
 a basic block.
 
 This file uses doctests all over. To test it, just run python 3 as follows:
-"python3 -m doctest main.py". The program uses syntax that is excluive of
+"python3 -m doctest main.py". The program uses syntax that is exclusive of
 Python 3. It will not work with standard Python 2.
 """
 
@@ -76,8 +76,8 @@ class Env:
             >>> e.get_from_list(["b", "a"])
             4
         """
-        # TODO: Implement this method
-        return 0
+        # implemented in this exercise
+        return next((value for (e_var, value) in self.env if e_var in vars), None)
 
     def set(s, var, value):
         """
