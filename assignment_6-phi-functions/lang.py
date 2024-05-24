@@ -518,10 +518,6 @@ def interp(instruction, environment, PC=0):
         2
     """
     if instruction:
-        # print("----------------------------------------------------------")
-        # print(instruction)
-        environment.dump()
-
         # implemented in this exercise
         if isinstance(instruction, PhiBlock):
             instruction.eval(environment, PC)
