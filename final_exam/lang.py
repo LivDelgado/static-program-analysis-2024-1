@@ -618,8 +618,20 @@ class Mul(BinOp):
             >>> print(e.get("a"))
             LangType.NUM
         """
-        # TODO: implement this method
-        raise NotImplementedError
+        # implemented in this exam
+
+        expected_type = LangType.NUM
+        all_types = []
+        for arg in [s.src0, s.src1]:
+            arg_type = next((value for (e_var, value) in type_env.env if e_var == arg), None)
+            if arg_type:
+                all_types.append(arg_type)
+
+        wrong_type = next((t for t in all_types if t != expected_type), None)
+        if wrong_type:
+            raise InstTypeErr(s, expected_type, wrong_type)
+
+        type_env.set(s.dst, expected_type)
 
     def get_opcode(self):
         return "*"
