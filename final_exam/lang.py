@@ -791,8 +791,11 @@ class Bt(Inst):
             lang.InstTypeErr: Type error in instruction 2
             Expected: LangType.BOOL, found: LangType.NUM
         """
-        # TODO: implement this method
-        raise NotImplementedError
+        # implemented in this exam
+
+        condition_type = next((value for (e_var, value) in type_env.env if e_var == s.cond), None)
+        if condition_type and condition_type != LangType.BOOL:
+            raise InstTypeErr(s, LangType.BOOL, condition_type)
 
     def get_next(s):
         return s.nexts[s.next_iter]
