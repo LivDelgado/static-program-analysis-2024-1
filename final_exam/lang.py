@@ -82,7 +82,7 @@ class Env:
             >>> e.get_from_list(["b", "a"])
             4
         """
-        # Implemented
+        # Implemented in this exam
         return next((value for (e_var, value) in self.env if e_var in vars), None)
 
     def set(s, var, value):
@@ -275,8 +275,17 @@ class Phi(Inst):
             lang.InstTypeErr: Type error in instruction 0
             Expected: LangType.NUM, found: LangType.BOOL
         """
-        # TODO: implement this method
-        raise NotImplementedError
+        # implemented in this exam
+        first_type = type_env.get(s.args[0])
+        all_types = []
+        for arg in s.args:
+            arg_type = next((value for (e_var, value) in type_env.env if e_var == arg), None)
+            if arg_type:
+                all_types.append(arg_type)
+
+        wrong_type = next((t for t in all_types if t != first_type), None)
+        if wrong_type:
+            raise InstTypeErr(s, first_type, wrong_type)
 
     def __str__(self):
         use_list = ", ".join(self.uses())
@@ -409,9 +418,11 @@ class PhiBlock(Inst):
             ['a0', 'a1']
         """
         self.phis = phis
-        # TODO: implement the rest of this method
-        # here...
-        #########################################
+
+        # implemented in assignment 6 - phi functions
+        self.selectors = dict(
+            (selector_IDs[i], i) for i in range(len(selector_IDs))
+        )
         super().__init__()
 
     def definition(self):
@@ -444,9 +455,18 @@ class PhiBlock(Inst):
         return sum([phi.uses() for phi in self.phis], [])
 
     def eval(self, env, PC):
-        # TODO: Read all the definitions
-        # TODO: Assign all the uses:
-        raise NotImplementedError
+
+        # implemented in assignment 6 - phi functions
+
+        index = self.selectors.get(PC)
+
+        operations = {}
+        for phi in self.phis:
+            use = phi.uses()[index]
+            operations.setdefault(phi.dst, env.get(use))
+
+        for k, v in operations.items():
+            env.set(k, v)
 
     def type_eval(s, type_env):
         """
